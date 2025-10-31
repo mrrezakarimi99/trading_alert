@@ -26,7 +26,7 @@ services:
       - SERVICE_MODE=fetch
       # TensorFlow CPU-only configuration
       - TF_CPP_MIN_LOG_LEVEL=2
-      - CUDA_VISIBLE_DEVICES=""
+      - CUDA_VISIBLE_DEVICES=0
     volumes:
       - data_volume:/app/data
         - ./src:/app/src
@@ -53,7 +53,7 @@ services:
       - SERVICE_MODE=train
       # TensorFlow CPU-only configuration
       - TF_CPP_MIN_LOG_LEVEL=2
-      - CUDA_VISIBLE_DEVICES=""
+      - CUDA_VISIBLE_DEVICES=0
       - TF_FORCE_GPU_ALLOW_GROWTH=false
       # Matplotlib configuration
       - MPLCONFIGDIR=/tmp/matplotlib
@@ -87,7 +87,7 @@ services:
       - SERVICE_MODE=trade
       # TensorFlow CPU-only configuration
       - TF_CPP_MIN_LOG_LEVEL=2
-      - CUDA_VISIBLE_DEVICES=""
+      - CUDA_VISIBLE_DEVICES=0
       - TF_FORCE_GPU_ALLOW_GROWTH=false
       # Matplotlib configuration
       - MPLCONFIGDIR=/tmp/matplotlib
@@ -127,7 +127,7 @@ services:
       - SERVICE_MODE=init
       # TensorFlow CPU-only configuration
       - TF_CPP_MIN_LOG_LEVEL=2
-      - CUDA_VISIBLE_DEVICES=""
+      - CUDA_VISIBLE_DEVICES=0
     volumes:
       - data_volume:/app/data
       - models_volume:/app/src/ml_models
