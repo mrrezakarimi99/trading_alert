@@ -27,6 +27,9 @@ services:
       # Mount .env file (make sure it exists)
       - ./.env:/app/.env:ro
     
+    # Ensure proper permissions
+    user: "1000:1000"
+    
     # Resource limits
     mem_limit: 1g
     cpus: 0.5

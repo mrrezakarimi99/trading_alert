@@ -25,6 +25,10 @@ class DatabaseService:
         # Try to create directory, use fallback if permission denied
         try:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            # Test write permissions by creating a temporary file
+            test_file = self.db_path.parent / ".test_write"
+            test_file.touch()
+            test_file.unlink()
         except (PermissionError, OSError) as e:
             logger.warning(f"Cannot use {db_path}, using memory database: {e}")
             # Use in-memory database as fallback
@@ -35,7 +39,14 @@ class DatabaseService:
     def _init_database(self):
         """Initialize database tables."""
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            # Set database connection timeout and enable WAL mode for better concurrency
+            with sqlite3.connect(str(self.db_path), timeout=30.0) as conn:
+                # Enable WAL mode for better concurrency and performance
+                conn.execute("PRAGMA journal_mode=WAL")
+                conn.execute("PRAGMA synchronous=NORMAL")
+                conn.execute("PRAGMA cache_size=-64000")  # 64MB cache
+                conn.execute("PRAGMA temp_store=MEMORY")
+                
                 cursor = conn.cursor()
                 
                 # Price data table
@@ -124,16 +135,25 @@ class DatabaseService:
                 cursor.execute("CREATE INDEX IF NOT EXISTS idx_predictions_asset_time ON predictions(asset_id, timestamp)")
                 
                 conn.commit()
-                logger.info(f"Database initialized at {self.db_path}")
+                if self.db_path == ":memory:":
+                    logger.info("Database initialized in memory (fallback mode)")
+                else:
+                    logger.info(f"Database initialized at {self.db_path}")
                 
         except Exception as e:
             logger.error(f"Failed to initialize database: {e}")
-            raise
+            # If we still can't initialize, try memory database as last resort
+            if self.db_path != ":memory:":
+                logger.warning("Falling back to in-memory database")
+                self.db_path = ":memory:"
+                self._init_database()
+            else:
+                raise
     
     def save_price_data(self, asset_id: str, price_data: List[PriceData]) -> bool:
         """Save price data to database."""
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(str(self.db_path), timeout=30.0) as conn:
                 cursor = conn.cursor()
                 
                 for data in price_data:
