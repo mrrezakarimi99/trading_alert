@@ -11,7 +11,7 @@
 # - Status:        docker-compose ps
 # =============================================================================
 
-version: '3.8'
+
 
 services:
   # =============================================================================
@@ -24,11 +24,14 @@ services:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
       - SERVICE_MODE=fetch
+      # TensorFlow CPU-only configuration
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - CUDA_VISIBLE_DEVICES=""
     volumes:
       - data_volume:/app/data
       - ./.env:/app/.env:ro
     user: "1000:1000"
-    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
+    entrypoint: ["/app/entrypoint.sh"]
     command: ["python", "main.py", "--fetch-data", "--days", "365"]
     restart: "no"  # Run once and exit
     logging:
@@ -47,11 +50,20 @@ services:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
       - SERVICE_MODE=train
+      # TensorFlow CPU-only configuration
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - CUDA_VISIBLE_DEVICES=""
+      - TF_FORCE_GPU_ALLOW_GROWTH=false
+      # Matplotlib configuration
+      - MPLCONFIGDIR=/tmp/matplotlib
+      - MPLBACKEND=Agg
     volumes:
       - data_volume:/app/data
       - ./.env:/app/.env:ro
+    tmpfs:
+      - /tmp:noexec,nosuid,size=200m
     user: "1000:1000"
-    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
+    entrypoint: ["/app/entrypoint.sh"]
     command: ["python", "main.py", "--train", "--days", "365"]
     restart: "no"  # Run once and exit
     logging:
@@ -71,11 +83,18 @@ services:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
       - SERVICE_MODE=trade
+      # TensorFlow CPU-only configuration
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - CUDA_VISIBLE_DEVICES=""
+      - TF_FORCE_GPU_ALLOW_GROWTH=false
+      # Matplotlib configuration
+      - MPLCONFIGDIR=/tmp/matplotlib
+      - MPLBACKEND=Agg
     volumes:
       - data_volume:/app/data
       - ./.env:/app/.env:ro
     user: "1000:1000"
-    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
+    entrypoint: ["/app/entrypoint.sh"]
     command: ["python", "main.py"]  # Default live trading
     # Resource limits
     mem_limit: 1g
@@ -103,12 +122,15 @@ services:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
       - SERVICE_MODE=init
+      # TensorFlow CPU-only configuration
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - CUDA_VISIBLE_DEVICES=""
     volumes:
       - data_volume:/app/data
       - ./.env:/app/.env:ro
     user: "1000:1000"
-    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
-    command: ["/app/scripts/init-pipeline.sh"]
+    entrypoint: ["/app/entrypoint.sh"]
+    command: ["/app/service-manager.sh", "health-check"]
     restart: "no"  # Run once and exit
     logging:
       driver: "json-file"

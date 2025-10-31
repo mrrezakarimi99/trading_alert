@@ -1,281 +1,256 @@
-# Cryptocurrency Trading System v2.0
+# 🚀 Crypto Trading System
 
-Professional multi-asset cryptocurrency trading and prediction system built with **SOLID principles** and **Object-Oriented Programming**. Features LSTM neural networks, **multi-provider data architecture**, and comprehensive backtesting with automatic failover capabilities.
+A professional cryptocurrency trading system powered by machine learning that automatically trades Bitcoin and other cryptocurrencies using LSTM neural networks for price prediction.
+
+## ✨ Features
+
+- 🤖 **AI-Powered Trading**: LSTM neural networks for price prediction
+- 📊 **Multi-Asset Support**: Bitcoin, Ethereum, and more cryptocurrencies
+- 🔒 **Risk Management**: Portfolio-based position sizing and risk controls
+- 📱 **Telegram Alerts**: Real-time notifications and trading signals
+- 🐳 **Docker Ready**: Easy deployment with Docker
+- 📈 **Backtesting**: Historical performance analysis
+- 🔄 **Auto-Recovery**: Robust error handling and recovery
+
+## 🏗️ Architecture
+
+```
+├── main.py                 # Main trading application
+├── docker-manager.sh       # Docker operations manager
+├── service-manager.sh      # Service operations manager
+├── entrypoint.sh          # Container entrypoint
+├── docker-compose.yml     # Multi-service deployment
+└── src/                   # Core application
+    ├── models/            # Data models
+    ├── services/          # Business logic
+    └── storage/           # Data persistence
+```
 
 ## 🚀 Quick Start
 
+### Prerequisites
+- Docker & Docker Compose
+- `.env` file with your configuration
+
+### 1️⃣ Initial Setup
 ```bash
-# Show all available commands
-python main.py --help
+# Make scripts executable
+chmod +x *.sh
 
-# Check system status
-python main.py --status
-
-# Fetch 1 year of historical data
-python main.py --fetch-data --days 365
-
-# Train ML models
-python main.py --train --days 365
-
-# Validate model performance  
-python main.py --validate --days 100
-
-# Run backtesting
-python main.py --backtest --days 90
-
-# Start live trading (single asset)
-python main.py --asset bitcoin
-
-# Start live trading (multi-asset from .env)
-python main.py
+# Complete setup (first time)
+./docker-manager.sh setup
 ```
+
+### 2️⃣ Start Trading
+```bash
+# Start the trading system
+./docker-manager.sh start
+
+# Monitor system
+./docker-manager.sh logs
+```
+
+## 🛠️ Management Commands
+
+### Docker Operations
+```bash
+./docker-manager.sh setup      # Complete first-time setup
+./docker-manager.sh start      # Start trading system  
+./docker-manager.sh stop       # Stop all services
+./docker-manager.sh restart    # Restart system
+./docker-manager.sh logs       # View live logs
+./docker-manager.sh status     # System status
+./docker-manager.sh clean      # Clean containers
+./docker-manager.sh reset      # Complete reset (removes data!)
+```
+
+### Service Operations  
+```bash
+./service-manager.sh health-check    # Full system health check
+./service-manager.sh check-models    # Check trained models
+./service-manager.sh check-data      # Check historical data
+./service-manager.sh model-info      # Show model information
+./service-manager.sh backup-data     # Backup models and data
+```
+
+### Individual Operations
+```bash
+# Data & Training
+./docker-manager.sh fetch      # Fetch historical data only
+./docker-manager.sh train      # Train ML models only
+./docker-manager.sh init       # Data + training (no start)
+
+# Monitoring
+./docker-manager.sh ps         # Show containers
+./service-manager.sh check-env # Check environment variables
+```
+
+## ⚙️ Configuration
+
+### Environment Variables (.env file)
+```bash
+# Portfolio Settings
+PORTFOLIO_SIZE=1000.0           # Total portfolio value
+MAX_RISK_PER_TRADE=0.02        # Risk per trade (2%)
+
+# API Keys (Optional but recommended)
+BINANCE_API_KEY=your_key
+BINANCE_SECRET_KEY=your_secret
+COINGECKO_API_KEY=your_key
+
+# Telegram Notifications (Optional)
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+
+# System Settings
+FETCH_INTERVAL=300             # Data fetch interval (seconds)
+LOG_LEVEL=INFO                 # Logging level
+```
+
+### Supported Assets
+- Bitcoin (BTC)
+- Ethereum (ETH) 
+- Other major cryptocurrencies
+
+## 📊 Usage Examples
+
+### First Time Setup
+```bash
+# Complete setup and start trading
+./docker-manager.sh setup
+
+# Check everything is working
+./service-manager.sh health-check
+```
+
+### Daily Operations
+```bash
+# Check system status
+./docker-manager.sh status
+
+# View recent activity
+./docker-manager.sh logs
+
+# Monitor model performance
+./service-manager.sh model-info
+```
+
+### Maintenance
+```bash
+# Update models weekly
+./docker-manager.sh train
+
+# Backup important data
+./service-manager.sh backup-data
+
+# System restart
+./docker-manager.sh restart
+```
+
+## 🔍 Monitoring
+
+### Real-time Monitoring
+```bash
+# Live logs
+./docker-manager.sh logs
+
+# Container status
+./docker-manager.sh ps
+
+# System health
+./service-manager.sh health-check
+```
+
+### Health Indicators
+- ✅ **Models**: Trained and ready
+- ✅ **Data**: Historical data available  
+- ✅ **APIs**: External services accessible
+- ✅ **Telegram**: Notifications working
+
+## 🐳 Docker Services
+
+The system runs multiple Docker services:
+
+| Service | Purpose | Command |
+|---------|---------|---------|
+| `data-fetcher` | Fetch historical data | `docker compose up data-fetcher` |
+| `trainer` | Train ML models | `docker compose up trainer` |
+| `crypto-trading` | Main trading system | `docker compose up -d crypto-trading` |
+| `watchtower` | Auto-updates | Runs automatically |
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**"Missing models" error:**
+```bash
+./docker-manager.sh train    # Train models first
+```
+
+**"No data found" error:**
+```bash
+./docker-manager.sh fetch    # Fetch data first
+```
+
+**Container won't start:**
+```bash
+./docker-manager.sh clean    # Clean and rebuild
+./docker-manager.sh build
+```
+
+**Check system health:**
+```bash
+./service-manager.sh health-check
+./docker-manager.sh status
+```
+
+### Log Locations
+- Container logs: `./docker-manager.sh logs`
+- Local logs: `./logs/trading_system.log`
+- Service status: `./docker-manager.sh status`
 
 ## 📁 Project Structure
 
 ```
-PredictPrice/
-├── main.py                     # 🎯 Main trading system
-├── run_tests.py               # Test suite runner
-├── production_guide.py        # Step-by-step production setup
-├── .env                       # Configuration file
-├── requirements.txt           # Python dependencies
-├── README.md                  # This documentation
-├── data/
-│   ├── csv/                   # CSV data backups
-│   └── database/
-│       └── trading.db         # SQLite database
-├── logs/
-│   └── trading_system.log     # System logs
-├── models/                    # Trained LSTM models
-├── src/
-│   ├── models/                # Domain models
-│   ├── services/
-│   │   ├── data_providers/    # Multi-provider architecture
-│   │   │   ├── binance_provider.py      # 1200 req/min
-│   │   │   ├── coincap_provider.py      # 200 req/min  
-│   │   │   ├── coingecko_provider.py    # Fallback
-│   │   │   └── multi_provider_service.py # Orchestrator
-│   │   ├── data_service.py    # Data orchestration
-│   │   ├── model_service.py   # ML model management
-│   │   ├── trading_service.py # Trading logic
-│   │   └── telegram_service.py # Notifications
-│   └── storage/               # Database & CSV storage
-└── tests/                     # Comprehensive test suite
+crypto-trading-system/
+├── 🐳 Docker Management
+│   ├── docker-manager.sh      # Main Docker operations
+│   ├── docker-compose.yml     # Service definitions  
+│   ├── Dockerfile             # Container image
+│   └── entrypoint.sh          # Container startup
+├── 🔧 Service Management  
+│   └── service-manager.sh     # Service operations
+├── 🚀 Application
+│   ├── main.py                # Trading application
+│   ├── requirements.txt       # Dependencies
+│   └── src/                   # Source code
+├── 📊 Data & Models
+│   ├── data/                  # Historical data
+│   └── src/ml_models/         # Trained models
+└── 📝 Documentation
+    └── README.md              # This file
 ```
 
-## ⚙️ Configuration (.env)
+## 🔐 Security
 
+- All services run as non-root user
+- Environment variables for sensitive data
+- Resource limits to prevent abuse
+- Health checks for monitoring
+
+## 📞 Support
+
+**Quick Help:**
 ```bash
-# =============================================================================
-# ASSET CONFIGURATION (Multi-Asset Support)
-# =============================================================================
-# Single asset: bitcoin
-# Multi-asset: bitcoin,ethereum,cardano,polkadot,chainlink,litecoin,stellar,dogecoin
-TRADING_ASSETS=bitcoin,ethereum,cardano
-PRIMARY_ASSET=bitcoin
-
-# Asset allocations (must sum to 1.0)
-BITCOIN_ALLOCATION=0.5
-ETHEREUM_ALLOCATION=0.3
-CARDANO_ALLOCATION=0.2
-
-# Asset-specific settings
-BITCOIN_MIN_CONFIDENCE=75.0
-ETHEREUM_MIN_CONFIDENCE=80.0
-CARDANO_MIN_CONFIDENCE=85.0
-
-# =============================================================================
-# TRADING CONFIGURATION
-# =============================================================================
-PORTFOLIO_SIZE=1000.00
-MAX_RISK_PER_TRADE=0.02
-FETCH_INTERVAL=60
-
-# =============================================================================
-# TELEGRAM NOTIFICATIONS
-# =============================================================================
-TELEGRAM_BOT_TOKEN=your_bot_token_here
-TELEGRAM_CHAT_ID=your_chat_id_here
-
-# =============================================================================
-# API CONFIGURATION
-# =============================================================================
-COINGECKO_API_KEY=your_api_key_here  # Optional (for higher rate limits)
+./docker-manager.sh --help      # Docker commands
+./service-manager.sh --help     # Service commands
 ```
 
-## 🔧 Architecture & Features
-
-### **🏗️ SOLID Principles Implementation**
-- **Single Responsibility**: Each class has one clear purpose
-- **Open/Closed**: Extensible through interfaces (DataProvider, ModelInterface)  
-- **Liskov Substitution**: Components can be swapped via protocols
-- **Interface Segregation**: Clean protocols (DataProvider, NotificationService)
-- **Dependency Inversion**: Main system depends on abstractions, not concrete classes
-
-### **✅ Core Features**
-- **Multi-Asset Trading**: Support for 8+ major cryptocurrencies
-- **Multi-Provider Data Architecture**: CoinCap, Binance, CoinGecko with automatic failover
-- **Real-time Data**: Live price fetching with intelligent rate limiting
-- **LSTM Predictions**: Neural network price predictions
-- **Telegram Notifications**: Real-time alerts and updates
-- **Backtesting Engine**: Historical strategy validation
-- **Model Validation**: Performance metrics and confidence analysis
-- **Portfolio Management**: Asset allocation and risk management
-- **High Availability**: 1200+ requests/minute capacity with provider redundancy
-
-### **🎯 OOP Design Patterns**
-- **Dependency Injection**: Components injected into main system
-- **Strategy Pattern**: Swappable data providers and notification services
-- **Factory Pattern**: Asset and service creation
-- **Protocol/Interface Pattern**: Clean abstractions for extensibility
-
-## 📊 Supported Assets
-
-- **Bitcoin (BTC)** - Primary cryptocurrency
-- **Ethereum (ETH)** - Smart contract platform  
-- **Cardano (ADA)** - Proof-of-stake blockchain
-- **Polkadot (DOT)** - Multi-chain protocol
-- **Chainlink (LINK)** - Oracle network
-- **Litecoin (LTC)** - Digital silver
-- **Stellar (XLM)** - Cross-border payments
-- **Dogecoin (DOGE)** - Community-driven cryptocurrency
-
-## 🧪 Testing
-
-### **Run All Tests**
+**System Status:**
 ```bash
-python run_tests.py
+./service-manager.sh health-check
 ```
 
-### **Individual Tests**
-```bash
-# Test multi-provider architecture
-python tests/test_multi_provider.py
+## ⚠️ Disclaimer
 
-# Test trading system integration  
-python tests/test_integration.py
-```
-
-### **Command Examples & Results**
-```bash
-# Check system status
-python main.py --status
-# Output: Assets: 1, Models: 1/1, Data: ✅, Telegram: ✅
-
-# Fetch historical data (1 year)
-python main.py --fetch-data --days 365 --asset bitcoin
-# Output: ✅ Fetched 365 records, 💾 Saved to database, 📄 Saved to CSV
-
-# Train ML model
-python main.py --train --days 365 --asset bitcoin  
-# Output: ✅ Model trained - Accuracy: 78.36%, RMSE: 4331.62
-
-# Validate model
-python main.py --validate --days 100 --asset bitcoin
-# Output: ✅ Accuracy: 15.00%, RMSE: 19462.00
-
-# Run backtesting
-python main.py --backtest --days 90 --asset bitcoin
-# Output: ✅ Return: -1.43%, Trades: 6, Win Rate: 33.3%
-
-# Live trading
-python main.py --asset bitcoin
-# Output: 🚀 Live trading, Current BITCOIN: $110,769.64, 📊 Prediction made
-```
-
-## 🔍 Troubleshooting
-
-### **API Issues**
-- **Provider Failover**: Automatic switching between CoinCap → Binance → CoinGecko
-- **Rate Limits**: Intelligent rate limiting per provider (200-1200 req/min)
-- **High Availability**: Multiple free APIs ensure 99.9% uptime
-- **No API Key Needed**: Works entirely with free tier APIs
-
-### **Configuration Issues**
-- **No Telegram messages**: Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `.env`
-- **Asset not found**: Check asset ID in `TRADING_ASSETS` matches supported assets
-- **Allocation errors**: Ensure allocations sum to 1.0 (or leave as 0.0 for equal distribution)
-
-### **System Issues**
-- **Import errors**: Ensure virtual environment is activated (`source .venv/bin/activate`)
-- **Missing dependencies**: Run `pip install -r requirements.txt`
-- **Logs**: Check `logs/` directory for detailed error information
-
-## 🎯 Production Setup Guide
-
-### **Step-by-Step Deployment**
-```bash
-# 1. Fetch 1 year of historical data
-python main.py --fetch-data --days 365
-
-# 2. Train ML models with full dataset  
-python main.py --train --days 365
-
-# 3. Validate model performance
-python main.py --validate --days 100
-
-# 4. Run comprehensive backtesting
-python main.py --backtest --days 90
-
-# 5. Check system health
-python main.py --status
-
-# 6. Clean up (optional - removes old data)
-rm -f data/database/trading.db logs/*.log data/csv/*.csv
-
-# 7. Start production trading
-python main.py --asset bitcoin
-# OR for multi-asset:
-python main.py
-
-# 8. Background production (Linux/Mac)
-nohup python main.py > trading.log 2>&1 &
-```
-
-### **Current Test Results**
-```bash
-✅ Multi-provider architecture: Binance + CoinGecko active
-✅ Data fetching: 365 days historical data (1 year)
-✅ Model training: 78.36% accuracy, RMSE: 4331.62
-✅ Backtesting: -1.43% return, 6 trades, 33.3% win rate
-✅ Live trading: Real-time prices $110,769.64
-✅ Telegram notifications: Messages sent successfully
-✅ Database persistence: All data saved to SQLite + CSV
-✅ Auto-training: Models created automatically when needed
-✅ Technical fallback: Works without trained models
-```
-
-## � Development Architecture
-
-### **Class Structure**
-```python
-# Domain Models
-AssetConfig, PriceData, Prediction, TradingSignal
-
-# Multi-Provider Data Architecture
-BaseDataProvider       # Protocol/interface for all providers
-CoinCapProvider        # Primary: 200 req/min, reliable
-BinanceProvider        # Secondary: 1200 req/min, high capacity  
-CoinGeckoProvider      # Fallback: rate limited but stable
-MultiProviderService   # Orchestrates failover and health monitoring
-
-# Services (Single Responsibility)
-DataService            # Multi-provider data orchestration
-AssetService           # Asset configuration management
-TelegramService        # Alert and notification system
-
-# Main System (Dependency Injection)
-CryptoTradingSystem    # Orchestrates all components
-```
-
-### **Key Design Benefits**
-- **Testable**: Each component can be unit tested independently
-- **Extensible**: Add new data providers or notification services easily
-- **Maintainable**: Clean separation of concerns
-- **Scalable**: SOLID principles ensure easy feature additions
-
----
-
-**Version**: 2.0.0 (Clean OOP Architecture)  
-**Author**: AI Assistant  
-**Architecture**: SOLID Principles + OOP Design Patterns
+This software is for educational purposes only. Cryptocurrency trading involves substantial risk of loss. Always conduct your own research and never invest more than you can afford to lose.

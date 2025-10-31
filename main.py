@@ -21,9 +21,11 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import warnings
 
-# Suppress warnings
+# Suppress warnings and configure TensorFlow for CPU-only
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'
 
 # Load environment variables
 try:

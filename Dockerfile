@@ -30,11 +30,11 @@ COPY . .
 RUN useradd --create-home --shell /bin/bash --uid 1000 trading
 
 # Create directories and set proper permissions
-RUN mkdir -p data/csv data/database logs src/ml_models \
+RUN mkdir -p data/csv data/database logs src/ml_models /tmp/matplotlib \
     && chown -R trading:trading /app \
     && chmod -R 755 /app \
-    && chmod -R 777 data logs src/ml_models \
-    && chmod +x /app/scripts/*.sh /app/scripts/*.py
+    && chmod -R 777 data logs src/ml_models /tmp/matplotlib \
+    && chmod +x /app/*.sh /app/service-manager.sh /app/docker-manager.sh
 
 # Switch to non-root user
 USER trading
@@ -42,6 +42,13 @@ USER trading
 # Set environment variables
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
+# TensorFlow CPU-only configuration to prevent CUDA errors
+ENV TF_CPP_MIN_LOG_LEVEL=2
+ENV CUDA_VISIBLE_DEVICES=""
+ENV TF_FORCE_GPU_ALLOW_GROWTH=false
+# Matplotlib configuration to use writable temp directory
+ENV MPLCONFIGDIR=/tmp/matplotlib
+ENV MPLBACKEND=Agg
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
