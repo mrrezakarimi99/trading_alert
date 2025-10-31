@@ -42,6 +42,8 @@ class DatabaseService:
     def _init_database(self):
         """Initialize database tables."""
         try:
+            # Ensure parent directory exists and is writable
+            self.db_path.parent.chmod(0o777)
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 
