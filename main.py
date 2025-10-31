@@ -40,14 +40,23 @@ log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 # Create logs directory if it doesn't exist
 Path("logs").mkdir(exist_ok=True)
 
-# Configure logging to both file and console
+# Configure logging handlers with error handling
+handlers = [logging.StreamHandler(sys.stdout)]
+
+# Try to add file handler, fall back to console only if permission denied
+try:
+    file_handler = logging.FileHandler('logs/trading_system.log')
+    handlers.append(file_handler)
+except PermissionError:
+    print("⚠️  Warning: Cannot write to log file, using console logging only")
+except Exception as e:
+    print(f"⚠️  Warning: Log file error ({e}), using console logging only")
+
+# Configure logging
 logging.basicConfig(
     level=log_level,
     format=log_format,
-    handlers=[
-        logging.FileHandler('logs/trading_system.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
+    handlers=handlers
 )
 logger = logging.getLogger(__name__)
 
