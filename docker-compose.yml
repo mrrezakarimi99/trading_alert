@@ -21,10 +21,8 @@ services:
       - TZ=UTC
     
     volumes:
-      # Mount data directories for persistence with proper permissions
-      - ./data:/app/data:rw
+      - data_volume:/app/data
       - ./logs:/app/logs:rw
-      # Mount .env file (make sure it exists)
       - ./.env:/app/.env:ro
     
     # Ensure proper permissions
@@ -60,6 +58,10 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_POLL_INTERVAL=3600  # Check for updates every hour
     command: crypto-trading-system
+
+volumes:
+  data_volume:
+    driver: local
 
 networks:
   default:
