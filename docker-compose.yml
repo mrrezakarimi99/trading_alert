@@ -26,7 +26,6 @@ services:
       - SERVICE_MODE=fetch
     volumes:
       - data_volume:/app/data
-      - ./logs:/app/logs:rw
       - ./.env:/app/.env:ro
     user: "1000:1000"
     entrypoint: ["/app/scripts/docker-entrypoint.sh"]
@@ -50,7 +49,6 @@ services:
       - SERVICE_MODE=train
     volumes:
       - data_volume:/app/data
-      - ./logs:/app/logs:rw
       - ./.env:/app/.env:ro
     user: "1000:1000"
     entrypoint: ["/app/scripts/docker-entrypoint.sh"]
@@ -75,7 +73,6 @@ services:
       - SERVICE_MODE=trade
     volumes:
       - data_volume:/app/data
-      - ./logs:/app/logs:rw
       - ./.env:/app/.env:ro
     user: "1000:1000"
     entrypoint: ["/app/scripts/docker-entrypoint.sh"]
@@ -108,7 +105,6 @@ services:
       - SERVICE_MODE=init
     volumes:
       - data_volume:/app/data
-      - ./logs:/app/logs:rw
       - ./.env:/app/.env:ro
     user: "1000:1000"
     entrypoint: ["/app/scripts/docker-entrypoint.sh"]
