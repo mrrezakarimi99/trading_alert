@@ -1,0 +1,151 @@
+# =============================================================================
+# CRYPTOCURRENCY TRADING SYSTEM - GIT IGNORE CONFIGURATION
+# =============================================================================
+
+# =============================================================================
+# PYTHON & VIRTUAL ENVIRONMENTS
+# =============================================================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.pyc
+env/
+venv/
+.venv/
+.env.local
+.env.*.local
+*.egg-info/
+dist/
+build/
+
+# =============================================================================
+# SENSITIVE CONFIGURATION
+# =============================================================================
+.env.production
+.env.staging
+config/secrets.json
+*.key
+*.pem
+*.p12
+*.pfx
+
+# =============================================================================
+# LARGE DATA FILES & DATABASES
+# =============================================================================
+# Historical data files (can be large)
+data/csv/*.csv
+data/raw/*.csv
+data/processed/*.csv
+data/backups/*.csv
+
+# Database files
+data/database/*.db
+data/database/*.sqlite
+data/database/*.sqlite3
+*.db-journal
+
+# ML Model files (can be very large)
+models/*.h5
+models/*.pkl
+models/*.keras
+models/*.joblib
+models/*.onnx
+src/ml_models/*.h5
+src/ml_models/*.pkl
+src/ml_models/*.keras
+src/ml_models/*.joblib
+
+# =============================================================================
+# LOGS & MONITORING
+# =============================================================================
+logs/
+*.log
+*.log.*
+logs/*.log
+logs/*.txt
+monitoring/*.log
+
+# =============================================================================
+# DEVELOPMENT & TESTING
+# =============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache
+.mypy_cache
+.dmypy.json
+dmypy.json
+test-results/
+coverage-reports/
+
+# =============================================================================
+# IDE & EDITORS
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# =============================================================================
+# OPERATING SYSTEM
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =============================================================================
+# TEMPORARY & BACKUP FILES
+# =============================================================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+.temporary
+*.orig
+
+# =============================================================================
+# DEPLOYMENT & SERVICES
+# =============================================================================
+*.pid
+*.sock
+/run
+/var
+supervisor.conf
+celery.conf
+
+# =============================================================================
+# DOCUMENTATION BUILD
+# =============================================================================
+docs/_build/
+docs/site/
+*.pdf
+*.epub
+
+# =============================================================================
+# PACKAGE MANAGERS
+# =============================================================================
+node_modules/
+.npm
+.yarn/
+yarn-error.log
+package-lock.json
+
+# =============================================================================
+# MONITORING & PERFORMANCE
+# =============================================================================
+*.prof
+*.pstats
+memory_profiler_*.dat

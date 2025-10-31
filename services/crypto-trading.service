@@ -1,0 +1,57 @@
+# =============================================================================
+# SYSTEMD SERVICE FILE - LINUX
+# =============================================================================
+# File: /etc/systemd/system/crypto-trading.service
+# 
+# Installation:
+# 1. sudo cp services/crypto-trading.service /etc/systemd/system/
+# 2. sudo systemctl daemon-reload
+# 3. sudo systemctl enable crypto-trading.service
+# 4. sudo systemctl start crypto-trading.service
+#
+# Management:
+# - Status: sudo systemctl status crypto-trading
+# - Start:  sudo systemctl start crypto-trading
+# - Stop:   sudo systemctl stop crypto-trading
+# - Logs:   sudo journalctl -u crypto-trading -f
+# =============================================================================
+
+[Unit]
+Description=Cryptocurrency Trading System v2.0
+Documentation=https://github.com/mrrezakarimi99/trading_alert
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/crypto-trading
+Environment=PYTHONPATH=/opt/crypto-trading
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/crypto-trading/.venv/bin/python main.py
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=crypto-trading
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/crypto-trading/data /opt/crypto-trading/logs
+
+# Resource limits
+MemoryLimit=1G
+CPUQuota=50%
+
+# Logging
+StandardOutput=append:/opt/crypto-trading/logs/service.log
+StandardError=append:/opt/crypto-trading/logs/service-error.log
+
+[Install]
+WantedBy=multi-user.target

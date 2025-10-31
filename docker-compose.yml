@@ -1,0 +1,63 @@
+# =============================================================================
+# DOCKER COMPOSE - EASY DEPLOYMENT
+# =============================================================================
+# Usage:
+# - Start:  docker-compose up -d
+# - Stop:   docker-compose down
+# - Logs:   docker-compose logs -f crypto-trading
+# - Status: docker-compose ps
+# =============================================================================
+
+version: '3.8'
+
+services:
+  crypto-trading:
+    build: .
+    container_name: crypto-trading-system
+    restart: unless-stopped
+    
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+    
+    volumes:
+      # Mount data directory for persistence
+      - ./data:/app/data
+      - ./logs:/app/logs
+      # Mount .env file (make sure it exists)
+      - ./.env:/app/.env:ro
+    
+    # Resource limits
+    mem_limit: 1g
+    cpus: 0.5
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a monitoring container
+  watchtower:
+    image: containrrr/watchtower
+    container_name: crypto-trading-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=3600  # Check for updates every hour
+    command: crypto-trading-system
+
+networks:
+  default:
+    name: crypto-trading-network
