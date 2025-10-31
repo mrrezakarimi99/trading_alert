@@ -21,9 +21,9 @@ services:
       - TZ=UTC
     
     volumes:
-      # Mount data directory for persistence
-      - ./data:/app/data
-      - ./logs:/app/logs
+      # Mount data directories for persistence with proper permissions
+      - ./data:/app/data:rw
+      - ./logs:/app/logs:rw
       # Mount .env file (make sure it exists)
       - ./.env:/app/.env:ro
     

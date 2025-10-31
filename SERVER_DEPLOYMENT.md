@@ -19,8 +19,12 @@ nano .env.production
 ln -sf .env.production .env
 ```
 
-### 3. Deploy with Docker Compose
+### 3. Initialize and Deploy
 ```bash
+# Initialize directories (ensures proper setup)
+chmod +x scripts/docker-init.sh
+./scripts/docker-init.sh
+
 # Build and start services
 docker-compose up -d
 

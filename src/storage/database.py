@@ -21,7 +21,22 @@ class DatabaseService:
     def __init__(self, db_path: str = "data/database/trading.db"):
         """Initialize database service."""
         self.db_path = Path(db_path)
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Try to create directory, with better error handling
+        try:
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        except PermissionError as e:
+            logger.error(f"Permission denied creating database directory: {e}")
+            # Try alternative location in user's home directory
+            import os
+            alt_path = Path.home() / ".crypto_trading" / "database"
+            alt_path.mkdir(parents=True, exist_ok=True)
+            self.db_path = alt_path / "trading.db"
+            logger.info(f"Using alternative database location: {self.db_path}")
+        except Exception as e:
+            logger.error(f"Error creating database directory: {e}")
+            raise
+            
         self._init_database()
     
     def _init_database(self):

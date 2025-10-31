@@ -21,7 +21,22 @@ class CSVStorageService:
     def __init__(self, csv_dir: str = "data/csv"):
         """Initialize CSV storage service."""
         self.csv_dir = Path(csv_dir)
-        self.csv_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Try to create directory, with better error handling
+        try:
+            self.csv_dir.mkdir(parents=True, exist_ok=True)
+        except PermissionError as e:
+            logger.error(f"Permission denied creating CSV directory: {e}")
+            # Try alternative location in user's home directory
+            import os
+            alt_path = Path.home() / ".crypto_trading" / "csv"
+            alt_path.mkdir(parents=True, exist_ok=True)
+            self.csv_dir = alt_path
+            logger.info(f"Using alternative CSV location: {self.csv_dir}")
+        except Exception as e:
+            logger.error(f"Error creating CSV directory: {e}")
+            raise
+            
         logger.info(f"CSV storage initialized at {self.csv_dir}")
     
     def save_price_data_csv(self, asset_id: str, price_data: List[PriceData]) -> bool:

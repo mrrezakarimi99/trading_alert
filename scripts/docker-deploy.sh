@@ -27,16 +27,23 @@ export GID=$(id -g)
 
 log_info "Using UID:GID = $UID:$GID for Docker containers"
 
-# Ensure directories exist (permissions handled in Dockerfile)
+# Ensure directories exist and are properly initialized
 setup_directories() {
     log_info "Setting up directories..."
     
     cd "$PROJECT_DIR"
     
-    # Create directories if they don't exist (Docker will handle permissions)
-    mkdir -p data/csv data/database logs
+    # Run initialization script
+    if [ -f "scripts/docker-init.sh" ]; then
+        chmod +x scripts/docker-init.sh
+        ./scripts/docker-init.sh
+    else
+        # Fallback: create directories manually
+        mkdir -p data/csv data/database logs
+        chmod 755 data data/csv data/database logs
+    fi
     
-    log_info "Directories created"
+    log_info "Directories initialized"
 }
 
 # Build Docker image
