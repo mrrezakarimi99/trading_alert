@@ -44,7 +44,7 @@ ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 # TensorFlow CPU-only configuration to prevent CUDA errors
 ENV TF_CPP_MIN_LOG_LEVEL=2
-ENV CUDA_VISIBLE_DEVICES=""
+ENV CUDA_VISIBLE_DEVICES=0
 ENV TF_FORCE_GPU_ALLOW_GROWTH=false
 # Matplotlib configuration to use writable temp directory
 ENV MPLCONFIGDIR=/tmp/matplotlib
