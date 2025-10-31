@@ -22,28 +22,19 @@ class DatabaseService:
         """Initialize database service."""
         self.db_path = Path(db_path)
         
-        # Try to create directory, with better error handling
+        # Try to create directory, use fallback if permission denied
         try:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        except PermissionError as e:
-            logger.error(f"Permission denied creating database directory: {e}")
-            # Try alternative location in user's home directory
-            import os
-            alt_path = Path.home() / ".crypto_trading" / "database"
-            alt_path.mkdir(parents=True, exist_ok=True)
-            self.db_path = alt_path / "trading.db"
-            logger.info(f"Using alternative database location: {self.db_path}")
-        except Exception as e:
-            logger.error(f"Error creating database directory: {e}")
-            raise
+        except (PermissionError, OSError) as e:
+            logger.warning(f"Cannot use {db_path}, using memory database: {e}")
+            # Use in-memory database as fallback
+            self.db_path = ":memory:"
             
         self._init_database()
     
     def _init_database(self):
         """Initialize database tables."""
         try:
-            # Ensure parent directory exists and is writable
-            self.db_path.parent.chmod(0o777)
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 

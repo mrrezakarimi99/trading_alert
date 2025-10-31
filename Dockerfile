@@ -26,12 +26,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create non-root user first
-RUN useradd --create-home --shell /bin/bash --uid 1000 trading
-
-# Create all necessary directories with proper permissions
+# Create directories and set permissions as root
 RUN mkdir -p data/csv data/database logs \
-    && chmod -R 777 /app/data /app/logs \
+    && chmod -R 777 data logs \
+    && useradd --create-home --shell /bin/bash --uid 1000 trading \
     && chown -R trading:trading /app
 
 # Switch to non-root user
