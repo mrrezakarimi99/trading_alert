@@ -46,7 +46,7 @@ ProtectHome=true
 ReadWritePaths=/opt/crypto-trading/data /opt/crypto-trading/logs
 
 # Resource limits
-MemoryLimit=1G
+MemoryMax=1G
 CPUQuota=50%
 
 # Logging
