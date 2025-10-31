@@ -57,43 +57,43 @@ show_help() {
 
 init_system() {
     log "Initializing crypto trading system..."
-    docker-compose build
-    docker-compose up init-pipeline
+    docker compose build
+    docker compose up init-pipeline
     success "System initialization completed!"
 }
 
 fetch_data() {
     log "Fetching historical data..."
-    docker-compose build
-    docker-compose up data-fetcher
+    docker compose build
+    docker compose up data-fetcher
     success "Data fetching completed!"
 }
 
 train_models() {
     log "Training ML models..."
-    docker-compose build
-    docker-compose up trainer
+    docker compose build
+    docker compose up trainer
     success "Model training completed!"
 }
 
 start_trading() {
     log "Starting trading system..."
-    docker-compose up -d crypto-trading watchtower
+    docker compose up -d crypto-trading watchtower
     success "Trading system started!"
     log "Use '$0 logs' to view logs"
 }
 
 full_deployment() {
     log "Running complete deployment pipeline..."
-    docker-compose build
+    docker compose build
     
     # Run initialization
     log "Step 1: Running initialization..."
-    docker-compose up init-pipeline
+    docker compose up init-pipeline
     
     # Start trading
     log "Step 2: Starting trading system..."
-    docker-compose up -d crypto-trading watchtower
+    docker compose up -d crypto-trading watchtower
     
     success "Complete deployment finished!"
     log "Use '$0 logs' to view logs"
@@ -102,24 +102,24 @@ full_deployment() {
 show_status() {
     log "System Status:"
     echo ""
-    docker-compose ps
+    docker compose ps
     echo ""
     
     # Try to show system status if trading container is running
-    if docker-compose ps | grep -q "crypto-trading-system.*Up"; then
+    if docker compose ps | grep -q "crypto-trading-system.*Up"; then
         log "Getting system status from trading container..."
-        docker-compose exec crypto-trading python main.py --status || true
+        docker compose exec crypto-trading python main.py --status || true
     fi
 }
 
 show_logs() {
     log "Showing logs (Ctrl+C to exit)..."
-    docker-compose logs -f
+    docker compose logs -f
 }
 
 stop_system() {
     log "Stopping all services..."
-    docker-compose down
+    docker compose down
     success "All services stopped!"
 }
 
@@ -128,7 +128,7 @@ clean_system() {
     read -p "Are you sure? This will delete all data and models! (y/N): " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        docker-compose down -v --remove-orphans
+        docker compose down -v --remove-orphans
         docker system prune -f
         success "System cleaned!"
     else
