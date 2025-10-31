@@ -29,7 +29,7 @@ services:
       - CUDA_VISIBLE_DEVICES=""
     volumes:
       - data_volume:/app/data
-      - ./src:/app/src
+        - ./src:/app/src
       - ./.env:/app/.env:ro
     user: "1000:1000"
     entrypoint: ["/app/entrypoint.sh"]
@@ -60,7 +60,7 @@ services:
       - MPLBACKEND=Agg
     volumes:
       - data_volume:/app/data
-      - ./src:/app/src
+      - models_volume:/app/src/ml_models
       - ./.env:/app/.env:ro
     tmpfs:
       - /tmp:noexec,nosuid,size=200m
@@ -94,7 +94,7 @@ services:
       - MPLBACKEND=Agg
     volumes:
       - data_volume:/app/data
-      - ./src:/app/src
+      - models_volume:/app/src/ml_models
       - ./.env:/app/.env:ro
     user: "1000:1000"
     entrypoint: ["/app/entrypoint.sh"]
@@ -130,7 +130,7 @@ services:
       - CUDA_VISIBLE_DEVICES=""
     volumes:
       - data_volume:/app/data
-      - ./src:/app/src
+      - models_volume:/app/src/ml_models
       - ./.env:/app/.env:ro
     user: "1000:1000"
     entrypoint: ["/app/entrypoint.sh"]
