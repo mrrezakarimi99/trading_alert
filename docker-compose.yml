@@ -159,6 +159,8 @@ services:
 volumes:
   data_volume:
     driver: local
+  models_volume:
+    driver: local
 
 networks:
   default:
