@@ -1,53 +1,128 @@
 # =============================================================================
-# DOCKER COMPOSE - EASY DEPLOYMENT
+# DOCKER COMPOSE - MULTI-SERVICE DEPLOYMENT
 # =============================================================================
 # Usage:
-# - Start:  docker-compose up -d
-# - Stop:   docker-compose down
-# - Logs:   docker-compose logs -f crypto-trading
-# - Status: docker-compose ps
+# - Start all:     docker-compose up -d
+# - Data fetch:    docker-compose up data-fetcher
+# - Training:      docker-compose up trainer
+# - Trading only:  docker-compose up crypto-trading
+# - Stop:          docker-compose down
+# - Logs:          docker-compose logs -f [service-name]
+# - Status:        docker-compose ps
 # =============================================================================
 
 version: '3.8'
 
 services:
-  crypto-trading:
+  # =============================================================================
+  # DATA FETCHER SERVICE - Fetches historical data
+  # =============================================================================
+  data-fetcher:
     build: .
-    container_name: crypto-trading-system
-    restart: unless-stopped
-    
+    container_name: crypto-data-fetcher
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-    
+      - SERVICE_MODE=fetch
     volumes:
       - data_volume:/app/data
       - ./logs:/app/logs:rw
       - ./.env:/app/.env:ro
-    
-    # Ensure proper permissions
     user: "1000:1000"
-    
-    # Resource limits
-    mem_limit: 1g
-    cpus: 0.5
-    
-    # Logging configuration
+    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
+    command: ["python", "main.py", "--fetch-data", "--days", "365"]
+    restart: "no"  # Run once and exit
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
-    
+
+  # =============================================================================
+  # MODEL TRAINER SERVICE - Trains ML models
+  # =============================================================================
+  trainer:
+    build: .
+    container_name: crypto-trainer
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      - SERVICE_MODE=train
+    volumes:
+      - data_volume:/app/data
+      - ./logs:/app/logs:rw
+      - ./.env:/app/.env:ro
+    user: "1000:1000"
+    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
+    command: ["python", "main.py", "--train", "--days", "365"]
+    restart: "no"  # Run once and exit
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # TRADING SERVICE - Main trading system
+  # =============================================================================
+  crypto-trading:
+    build: .
+    container_name: crypto-trading-system
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      - SERVICE_MODE=trade
+    volumes:
+      - data_volume:/app/data
+      - ./logs:/app/logs:rw
+      - ./.env:/app/.env:ro
+    user: "1000:1000"
+    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
+    command: ["python", "main.py"]  # Default live trading
+    # Resource limits
+    mem_limit: 1g
+    cpus: 0.5
     # Health check
     healthcheck:
       test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 90s  # Give more time for model loading and dependency check
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # Optional: Add a monitoring container
+  # =============================================================================
+  # INIT SERVICE - Runs complete initialization pipeline
+  # =============================================================================
+  init-pipeline:
+    build: .
+    container_name: crypto-init-pipeline
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      - SERVICE_MODE=init
+    volumes:
+      - data_volume:/app/data
+      - ./logs:/app/logs:rw
+      - ./.env:/app/.env:ro
+    user: "1000:1000"
+    entrypoint: ["/app/scripts/docker-entrypoint.sh"]
+    command: ["/app/scripts/init-pipeline.sh"]
+    restart: "no"  # Run once and exit
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # WATCHTOWER - Auto-updates containers
+  # =============================================================================
   watchtower:
     image: containrrr/watchtower
     container_name: crypto-trading-watchtower

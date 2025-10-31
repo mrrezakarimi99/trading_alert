@@ -30,10 +30,11 @@ COPY . .
 RUN useradd --create-home --shell /bin/bash --uid 1000 trading
 
 # Create directories and set proper permissions
-RUN mkdir -p data/csv data/database logs \
+RUN mkdir -p data/csv data/database logs src/ml_models \
     && chown -R trading:trading /app \
     && chmod -R 755 /app \
-    && chmod -R 777 data logs
+    && chmod -R 777 data logs src/ml_models \
+    && chmod +x /app/scripts/*.sh /app/scripts/*.py
 
 # Switch to non-root user
 USER trading
